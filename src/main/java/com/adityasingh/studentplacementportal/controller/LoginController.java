@@ -11,15 +11,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-    // Show Admin Login
-    @GetMapping("/login")
+    // Show Teacher / Admin Login Page
+    @GetMapping("/teacher-login")
     public String loginPage() {
 
         return "login";
     }
 
-    // Process Admin Login
-    @PostMapping("/login")
+
+    // Old /login URL redirects to new Teacher Login
+    @GetMapping("/login")
+    public String oldLoginPage() {
+
+        return "redirect:/teacher-login";
+    }
+
+
+    // Process Teacher / Admin Login
+    @PostMapping("/teacher-login")
     public String login(
             @RequestParam String username,
             @RequestParam String password,
@@ -29,18 +38,13 @@ public class LoginController {
         if (username.equals("admin")
                 && password.equals("admin123")) {
 
-            session.setAttribute(
-                    "loggedIn",
-                    true
-            );
+            session.setAttribute("loggedIn", true);
 
-            session.setAttribute(
-                    "username",
-                    username
-            );
+            session.setAttribute("username", username);
 
             return "redirect:/admin-dashboard";
         }
+
 
         model.addAttribute(
                 "error",
@@ -50,12 +54,13 @@ public class LoginController {
         return "login";
     }
 
-    // Admin Logout
+
+    // Teacher / Admin Logout
     @GetMapping("/logout")
-    public String logout(
-            HttpSession session) {
+    public String logout(HttpSession session) {
 
         session.removeAttribute("loggedIn");
+
         session.removeAttribute("username");
 
         return "redirect:/";

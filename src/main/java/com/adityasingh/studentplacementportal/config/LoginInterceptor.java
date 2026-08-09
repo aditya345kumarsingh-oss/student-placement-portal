@@ -17,26 +17,26 @@ public class LoginInterceptor implements HandlerInterceptor {
             Object handler) throws Exception {
 
         // Get existing session
-        // false means: don't create a new session
+        // false means: do not create a new session
         HttpSession session = request.getSession(false);
 
-        // Check whether admin is logged in
+        // Check whether Teacher/Admin is logged in
         boolean loggedIn =
                 session != null
                 && Boolean.TRUE.equals(
                         session.getAttribute("loggedIn")
                 );
 
-        // If admin is NOT logged in
+        // If Teacher/Admin is NOT logged in
         if (!loggedIn) {
 
-            // Send user to Admin Login page
-            response.sendRedirect("/login");
+            // Redirect to Teacher/Admin login page
+            response.sendRedirect("/teacher-login");
 
             return false;
         }
 
-        // Admin is logged in, allow access
+        // Teacher/Admin is logged in, allow access
         return true;
     }
 }

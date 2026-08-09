@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+
+    <div class="container">
+
+        <a class="navbar-brand" href="/admin-dashboard">
+            Student Placement Portal
+        </a>
+
+        <div>
+
+            <a href="/admin-dashboard"
+               class="btn btn-outline-light btn-sm">
+                Home
+            </a>
+
+            <a href="/students"
+               class="btn btn-outline-light btn-sm">
+                Students
+            </a>
+
+            <a href="/companies"
+               class="btn btn-outline-light btn-sm">
+                Companies
+            </a>
+
+            <a href="/placements"
+               class="btn btn-outline-light btn-sm">
+                Placements
+            </a>
+
+            <a href="/logout"
+               class="btn btn-danger btn-sm">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <!-- PAGE HEADING -->
+
+    <div class="text-center mb-4">
+
+        <h1>
+            Student Management
+        </h1>
+
+        <p class="text-muted">
+            Add, edit, delete and search students
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Search Students
+            </h4>
+
+            <div class="row">
+
+                <!-- Search by ID -->
+
+                <div class="col-md-6 mb-3">
+
+                    <form
+                        th:action="@{/students/search}"
+                        method="get">
+
+                        <label class="form-label">
+                            Search by Student ID
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="number"
+                                name="id"
+                                class="form-control"
+                                placeholder="Enter Student ID"
+                                required>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+                                Search
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- Search by Name -->
+
+                <div class="col-md-6 mb-3">
+
+                    <form
+                        th:action="@{/students/search}"
+                        method="get">
+
+                        <label class="form-label">
+                            Search by Student Name
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="text"
+                                name="name"
+                                class="form-control"
+                                placeholder="Enter Student Name"
+                                required>
+
+                            <button
+                                type="submit"
+                                class="btn btn-success">
+                                Search
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="/students"
+                class="btn btn-secondary">
+
+                Clear Search
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- INVALID ID MESSAGE -->
+
+    <div
+        class="alert alert-warning"
+        th:if="${idSearchPerformed != null
+                and idSearchPerformed
+                and searchResult == null}">
+
+        <strong>No student found.</strong>
+
+        The Student ID you entered does not exist.
+
+    </div>
+
+
+    <!-- SEARCH RESULT BY ID -->
+
+    <div
+        class="card shadow mb-4"
+        th:if="${searchResult != null}">
+
+        <div class="card-body">
+
+            <h3 class="mb-4">
+                Student Search Result
+            </h3>
+
+
+            <!-- STUDENT INFO -->
+
+            <div class="card mb-4">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+                        Student Information
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <p>
+                                <strong>Student ID:</strong>
+                                <span th:text="${searchResult.studentId}"></span>
+                            </p>
+
+                            <p>
+                                <strong>Name:</strong>
+                                <span th:text="${searchResult.name}"></span>
+                            </p>
+
+                            <p>
+                                <strong>Email:</strong>
+                                <span th:text="${searchResult.email}"></span>
+                            </p>
+
+                            <p>
+                                <strong>Phone:</strong>
+                                <span th:text="${searchResult.phone}"></span>
+                            </p>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <p>
+                                <strong>Course:</strong>
+                                <span th:text="${searchResult.course}"></span>
+                            </p>
+
+                            <p>
+                                <strong>Branch:</strong>
+                                <span th:text="${searchResult.branch}"></span>
+                            </p>
+
+                            <p>
+                                <strong>CGPA:</strong>
+                                <span th:text="${searchResult.cgpa}"></span>
+                            </p>
+
+                            <p>
+                                <strong>Passing Year:</strong>
+                                <span th:text="${searchResult.passingYear}"></span>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PLACEMENT INFO -->
+
+            <div
+                th:if="${placementResults != null
+                        and !#lists.isEmpty(placementResults)}">
+
+                <div
+                    th:each="placement : ${placementResults}"
+                    class="card mb-4">
+
+                    <div class="card-header bg-success text-white">
+
+                        <h5 class="mb-0">
+                            Placement Information
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+
+                            <div class="col-md-6">
+
+                                <h6>
+                                    Placement Details
+                                </h6>
+
+                                <p>
+                                    <strong>Placement ID:</strong>
+                                    <span th:text="${placement.placementId}"></span>
+                                </p>
+
+                                <p>
+                                    <strong>Placement Date:</strong>
+                                    <span th:text="${placement.placementDate}"></span>
+                                </p>
+
+                                <p>
+                                    <strong>Status:</strong>
+
+                                    <span
+                                        class="badge bg-success"
+                                        th:text="${placement.status}">
+                                    </span>
+                                </p>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <h6>
+                                    Company Information
+                                </h6>
+
+                                <p>
+                                    <strong>Company:</strong>
+                                    <span th:text="${placement.company.companyName}"></span>
+                                </p>
+
+                                <p>
+                                    <strong>Location:</strong>
+                                    <span th:text="${placement.company.location}"></span>
+                                </p>
+
+                                <p>
+                                    <strong>Package:</strong>
+
+                                    <span th:text="${placement.company.packageLpa}"></span>
+
+                                    LPA
+                                </p>
+
+                                <p>
+                                    <strong>Minimum CGPA:</strong>
+                                    <span th:text="${placement.company.minimumCgpa}"></span>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- NO PLACEMENT -->
+
+            <div
+                class="alert alert-warning"
+                th:if="${placementResults == null
+                        or #lists.isEmpty(placementResults)}">
+
+                <strong>
+                    No placement record found.
+                </strong>
+
+                This student has not been placed yet.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NAME SEARCH RESULTS -->
+
+    <div
+        class="card shadow mb-4"
+        th:if="${searchResults != null}">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Student Search Results
+            </h4>
+
+
+            <div
+                class="table-responsive"
+                th:if="${!#lists.isEmpty(searchResults)}">
+
+                <table
+                    class="table table-bordered table-striped">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Course</th>
+                            <th>Branch</th>
+                            <th>CGPA</th>
+                            <th>Passing Year</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr
+                            th:each="student : ${searchResults}">
+
+                            <td th:text="${student.studentId}"></td>
+
+                            <td th:text="${student.name}"></td>
+
+                            <td th:text="${student.email}"></td>
+
+                            <td th:text="${student.phone}"></td>
+
+                            <td th:text="${student.course}"></td>
+
+                            <td th:text="${student.branch}"></td>
+
+                            <td th:text="${student.cgpa}"></td>
+
+                            <td th:text="${student.passingYear}"></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div
+                class="alert alert-warning"
+                th:if="${#lists.isEmpty(searchResults)}">
+
+                No student found with that name.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ADD / EDIT STUDENT -->
+
+    <div class="card shadow mb-5">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Add / Edit Student
+            </h4>
+
+
+            <form
+                th:action="@{/students/save}"
+                th:object="${student}"
+                method="post">
+
+
+                <input
+                    type="hidden"
+                    th:field="*{studentId}">
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{name}"
+                        placeholder="Enter Name"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        class="form-control"
+                        th:field="*{email}"
+                        placeholder="Enter Email"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{phone}"
+                        placeholder="Enter Phone Number"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Course
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{course}"
+                        placeholder="Enter Course"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Branch
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{branch}"
+                        placeholder="Enter Branch"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        CGPA
+                    </label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        th:field="*{cgpa}"
+                        step="0.1"
+                        min="0"
+                        max="10"
+                        placeholder="Enter CGPA"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Passing Year
+                    </label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        th:field="*{passingYear}"
+                        placeholder="Enter Passing Year"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Save Student
+
+                </button>
+
+
+                <a
+                    href="/students"
+                    class="btn btn-secondary">
+
+                    Clear
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDENT LIST -->
+
+    <h2 class="mb-3">
+        Student List
+    </h2>
+
+
+    <div class="table-responsive">
+
+        <table
+            class="table table-bordered table-striped align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Course</th>
+                    <th>Branch</th>
+                    <th>CGPA</th>
+                    <th>Passing Year</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr
+                    th:each="student : ${students}">
+
+                    <td th:text="${student.studentId}"></td>
+
+                    <td th:text="${student.name}"></td>
+
+                    <td th:text="${student.email}"></td>
+
+                    <td th:text="${student.phone}"></td>
+
+                    <td th:text="${student.course}"></td>
+
+                    <td th:text="${student.branch}"></td>
+
+                    <td th:text="${student.cgpa}"></td>
+
+                    <td th:text="${student.passingYear}"></td>
+
+                    <td>
+
+                        <a
+                            th:href="@{/students/edit/{id}(id=${student.studentId})}"
+                            class="btn btn-warning btn-sm">
+
+                            Edit
+
+                        </a>
+
+                        <a
+                            th:href="@{/students/delete/{id}(id=${student.studentId})}"
+                            class="btn btn-danger btn-sm">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                <tr
+                    th:if="${#lists.isEmpty(students)}">
+
+                    <td
+                        colspan="9"
+                        class="text-center">
+
+                        No students found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

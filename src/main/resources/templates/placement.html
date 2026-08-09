@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Placement Management</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+
+<!-- ========================================== -->
+<!-- NAVBAR - NOW AT THE TOP -->
+<!-- ========================================== -->
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           href="/admin-dashboard">
+
+            Student Placement Portal
+
+        </a>
+
+
+        <div>
+
+            <a href="/admin-dashboard"
+               class="btn btn-outline-light btn-sm">
+
+                Home
+
+            </a>
+
+            <a href="/students"
+               class="btn btn-outline-light btn-sm">
+
+                Students
+
+            </a>
+
+            <a href="/companies"
+               class="btn btn-outline-light btn-sm">
+
+                Companies
+
+            </a>
+
+            <a href="/placements"
+               class="btn btn-outline-light btn-sm">
+
+                Placements
+
+            </a>
+
+            <a href="/logout"
+               class="btn btn-danger btn-sm">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- ========================================== -->
+<!-- MAIN CONTAINER -->
+<!-- ========================================== -->
+
+<div class="container">
+
+
+    <!-- PAGE HEADING -->
+
+    <div class="text-center mb-4">
+
+        <h1>
+            Placement Management
+        </h1>
+
+        <p class="text-muted">
+            Add, edit and manage student placements
+        </p>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- ADD / EDIT PLACEMENT -->
+    <!-- ========================================== -->
+
+    <div class="card shadow mb-5">
+
+        <div class="card-body">
+
+            <h3 class="mb-4">
+                Add / Edit Placement
+            </h3>
+
+
+            <form
+                th:action="@{/placements/save}"
+                th:object="${placement}"
+                method="post">
+
+
+                <!-- Hidden Placement ID -->
+
+                <input
+                    type="hidden"
+                    th:field="*{placementId}">
+
+
+                <!-- ============================= -->
+                <!-- STUDENT -->
+                <!-- ============================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Student
+                    </label>
+
+                    <select
+                        class="form-select"
+                        th:field="*{student}"
+                        required>
+
+                        <option value="">
+                            Select Student
+                        </option>
+
+                        <option
+                            th:each="student : ${students}"
+                            th:value="${student.studentId}"
+                            th:text="${student.name}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- COMPANY -->
+                <!-- ============================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Company
+                    </label>
+
+                    <select
+                        class="form-select"
+                        th:field="*{company}"
+                        required>
+
+                        <option value="">
+                            Select Company
+                        </option>
+
+                        <option
+                            th:each="company : ${companies}"
+                            th:value="${company.companyId}"
+                            th:text="${company.companyName}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- PLACEMENT DATE -->
+                <!-- ============================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Placement Date
+                    </label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        th:field="*{placementDate}"
+                        required>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- STATUS -->
+                <!-- ============================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        class="form-select"
+                        th:field="*{status}"
+                        required>
+
+                        <option value="">
+                            Select Status
+                        </option>
+
+                        <option value="Selected">
+                            Selected
+                        </option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="Rejected">
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- BUTTONS -->
+                <!-- ============================= -->
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    Save Placement
+
+                </button>
+
+
+                <a
+                    href="/placements"
+                    class="btn btn-secondary">
+
+                    Clear
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- PLACEMENT LIST -->
+    <!-- ========================================== -->
+
+    <h2 class="mb-3">
+        Placement List
+    </h2>
+
+
+    <div class="table-responsive">
+
+        <table
+            class="table table-bordered table-striped align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Student
+                    </th>
+
+                    <th>
+                        Company
+                    </th>
+
+                    <th>
+                        Package (LPA)
+                    </th>
+
+                    <th>
+                        Placement Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                <!-- ================================= -->
+                <!-- LOOP THROUGH PLACEMENTS -->
+                <!-- ================================= -->
+
+                <tr th:each="placement : ${placements}">
+
+
+                    <!-- Placement ID -->
+
+                    <td
+                        th:text="${placement.placementId}">
+
+                    </td>
+
+
+                    <!-- Student Name -->
+
+                    <td
+                        th:text="${placement.student.name}">
+
+                    </td>
+
+
+                    <!-- Company Name -->
+
+                    <td
+                        th:text="${placement.company.companyName}">
+
+                    </td>
+
+
+                    <!-- Package -->
+
+                    <td
+                        th:text="${placement.company.packageLpa}">
+
+                    </td>
+
+
+                    <!-- Placement Date -->
+
+                    <td
+                        th:text="${placement.placementDate}">
+
+                    </td>
+
+
+                    <!-- Status -->
+
+                    <td>
+
+                        <!-- Selected -->
+
+                        <span
+                            th:if="${placement.status == 'Selected'}"
+                            class="badge bg-success"
+                            th:text="${placement.status}">
+                        </span>
+
+
+                        <!-- Pending -->
+
+                        <span
+                            th:if="${placement.status == 'Pending'}"
+                            class="badge bg-warning text-dark"
+                            th:text="${placement.status}">
+                        </span>
+
+
+                        <!-- Rejected -->
+
+                        <span
+                            th:if="${placement.status == 'Rejected'}"
+                            class="badge bg-danger"
+                            th:text="${placement.status}">
+                        </span>
+
+
+                        <!-- Other Status -->
+
+                        <span
+                            th:if="${placement.status != 'Selected'
+                            and placement.status != 'Pending'
+                            and placement.status != 'Rejected'}"
+                            th:text="${placement.status}">
+                        </span>
+
+                    </td>
+
+
+                    <!-- ================================= -->
+                    <!-- ACTION BUTTONS -->
+                    <!-- ================================= -->
+
+                    <td>
+
+                        <!-- Edit -->
+
+                        <a
+                            th:href="@{/placements/edit/{id}
+                            (id=${placement.placementId})}"
+                            class="btn btn-warning btn-sm">
+
+                            Edit
+
+                        </a>
+
+
+                        <!-- Delete -->
+
+                        <a
+                            th:href="@{/placements/delete/{id}
+                            (id=${placement.placementId})}"
+                            class="btn btn-danger btn-sm">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- ================================= -->
+                <!-- EMPTY LIST -->
+                <!-- ================================= -->
+
+                <tr th:if="${#lists.isEmpty(placements)}">
+
+                    <td
+                        colspan="7"
+                        class="text-center">
+
+                        No placement records found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- BOOTSTRAP -->
+<!-- ========================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>
